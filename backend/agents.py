@@ -2,10 +2,13 @@ import os
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import PromptTemplate
 from dotenv import load_dotenv
+from pathlib import Path
 
-# 1. Carregue as variáveis de ambiente.
-# Isso garante que a variável GOOGLE_API_KEY do seu .env seja lida.
-load_dotenv()
+# Define o caminho base do diretório 'backend'
+BASE_DIR = Path(__file__).resolve().parent
+
+# 1. Carregue as variáveis de ambiente, especificando o caminho do .env.
+load_dotenv(BASE_DIR / ".env")
 
 # 2. Obtenha a chave da API.
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
