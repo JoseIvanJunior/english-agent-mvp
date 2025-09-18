@@ -28,6 +28,9 @@ Base.metadata.create_all(bind=engine)
 AUDIO_DIR = BASE_DIR / "audio"
 AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 
+# Diretório do frontend
+FRONTEND_DIR = BASE_DIR / "frontend"
+
 # --- Configuração do FastAPI ---
 app = FastAPI(title="English Agent Backend")
 
@@ -35,7 +38,8 @@ app = FastAPI(title="English Agent Backend")
 origins = [
     "http://localhost",
     "http://127.0.0.1:5500",
-    "http://localhost:5500"
+    "http://localhost:5500",
+    "https://english-agent-mvp-production.up.railway.app"
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -47,6 +51,9 @@ app.add_middleware(
 
 # Servir arquivos de áudio
 app.mount("/audio", StaticFiles(directory=AUDIO_DIR), name="audio")
+
+# Servir arquivos estáticos do frontend (CSS, JS, imagens)
+app.mount("/static", StaticFiles(directory=FRONTEND_DIR / "static"), name="static")
 
 # --- Routers adicionais ---
 app.include_router(reminder.router)
@@ -134,3 +141,19 @@ def startup_event():
         print("✅ Scheduler started: daily reminder at 20:00")
     except Exception as e:
         print("⚠️ Scheduler not started:", e)
+
+# ---------------- Servir o Frontend ----------------
+@app.get("/{full_path:path}")
+async def serve_frontend(full_path: str):
+    """Sirve o arquivo index.html do frontend para qualquer rota não API."""
+    # Verifica se o arquivo solicitado existe no frontend
+    file_path = FRONTEND_DIR / full_path
+    if file_path.exists() and file_path.is_file():
+        return FileResponse(file_path)
+    
+    # Se não encontrou o arquivo específico, serve o index.html
+    index_path = FRONTEND_DIR / "index.html"
+    if not index_path.exists():
+        raise HTTPException(status_code=404, detail="Página não encontrada")
+    
+    return FileResponse(index_path)
