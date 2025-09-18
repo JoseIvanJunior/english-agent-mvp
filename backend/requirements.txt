@@ -1,0 +1,18 @@
+fastapi
+uvicorn
+sqlalchemy
+python-dotenv   # se quiser carregar variáveis de ambiente de um .env
+pydantic        # já vem com fastapi, mas colocar explicitamente ajuda
+uvicorn
+sqlalchemy
+psycopg2-binary
+python-dotenv
+pydantic
+apscheduler
+requests
+gTTS
+langchain
+langchain-google-genai
+google-generativeai
+python-dateutil
+fastapi-cors
