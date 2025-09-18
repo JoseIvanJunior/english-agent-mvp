@@ -17,7 +17,7 @@ def send_reminder_via_api(user: str, message: str):
     except Exception as e:
         print("Failed to call /send_message:", e)
 
-def schedule_daily_reminder(hour:int=20, minute:int=0, user: str = DEFAULT_USER):
+def schedule_daily_reminder(hour:int=13, minute:int=00, user: str = DEFAULT_USER):
     # example: schedule every day at hour:minute
     scheduler.add_job(lambda: send_reminder_via_api(user, "It's time to practice English! 🎯"),
                       "cron", hour=hour, minute=minute, id="daily_practice")

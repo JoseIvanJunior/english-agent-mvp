@@ -16,3 +16,6 @@ langchain-google-genai
 google-generativeai
 python-dateutil
 fastapi-cors
+openai
+alembic
+python-dotenv
