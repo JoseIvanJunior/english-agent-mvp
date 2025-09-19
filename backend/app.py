@@ -28,8 +28,8 @@ Base.metadata.create_all(bind=engine)
 AUDIO_DIR = BASE_DIR / "audio"
 AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 
-# Diretório do frontend
-FRONTEND_DIR = BASE_DIR / "frontend"
+# Diretório do frontend - CORRIGIDO: sobe um nível para /app/frontend
+FRONTEND_DIR = BASE_DIR.parent / "frontend"
 
 # --- Configuração do FastAPI ---
 app = FastAPI(title="English Agent Backend")
@@ -52,8 +52,11 @@ app.add_middleware(
 # Servir arquivos de áudio
 app.mount("/audio", StaticFiles(directory=AUDIO_DIR), name="audio")
 
-# Servir arquivos estáticos do frontend (CSS, JS, imagens)
-app.mount("/static", StaticFiles(directory=FRONTEND_DIR / "static"), name="static")
+# Servir arquivos estáticos do frontend (CSS, JS, imagens) - COM VERIFICAÇÃO
+if (FRONTEND_DIR / "static").exists():
+    app.mount("/static", StaticFiles(directory=FRONTEND_DIR / "static"), name="static")
+else:
+    print("⚠️ Diretório static não encontrado. Frontend não será servido.")
 
 # --- Routers adicionais ---
 app.include_router(reminder.router)
@@ -146,14 +149,18 @@ def startup_event():
 @app.get("/{full_path:path}")
 async def serve_frontend(full_path: str):
     """Sirve o arquivo index.html do frontend para qualquer rota não API."""
-    # Verifica se o arquivo solicitado existe no frontend
+    # Verifica se o frontend existe
+    if not FRONTEND_DIR.exists():
+        raise HTTPException(status_code=404, detail="Frontend não encontrado")
+    
+    # Verifica se o arquivo específico existe
     file_path = FRONTEND_DIR / full_path
     if file_path.exists() and file_path.is_file():
         return FileResponse(file_path)
     
-    # Se não encontrou o arquivo específico, serve o index.html
+    # Serve o index.html para todas as outras rotas
     index_path = FRONTEND_DIR / "index.html"
-    if not index_path.exists():
-        raise HTTPException(status_code=404, detail="Página não encontrada")
+    if index_path.exists():
+        return FileResponse(index_path)
     
-    return FileResponse(index_path)
+    raise HTTPException(status_code=404, detail="Página não encontrada")
