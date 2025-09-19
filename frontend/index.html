@@ -1,33 +1,82 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <title>English Agent</title>
+  <title>Agente de Inglês</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <style>
+    /* Estilo simples para o ícone do microfone */
+    .mic-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.3s ease;
+      color: #333;
+    }
+    .mic-btn.recording {
+      color: #e53935; /* vermelho quando gravando */
+    }
+    .mic-btn svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+  </style>
 </head>
 <body>
-  <h1>English Agent</h1>
+  <h1>Agente de Inglês</h1>
 
   <div id="app">
+    <!-- Indicador de status -->
+    <div id="statusBar"></div>
+    
     <div id="chat"></div>
 
     <div class="input-container">
-      <input id="input" placeholder="Type your message in English..." />
-      <button id="sendBtn">Send</button>
+      <textarea id="input" placeholder="Digite sua mensagem em inglês ou grave áudio..." rows="1"></textarea>
+      <div class="audio-controls">
+        <button id="micBtn" class="mic-btn" title="Gravar Áudio" aria-label="Gravar Áudio">
+          <!-- Ícone SVG de microfone -->
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/>
+            <path d="M19 11a1 1 0 0 0-2 0 5 5 0 0 1-10 0 1 1 0 0 0-2 0 7 7 0 0 0 6 6.92V21h-3a1 1 0 1 0 0 2h8a1 1 0 1 0 0-2h-3v-3.08A7 7 0 0 0 19 11z"/>
+          </svg>
+        </button>
+        <button id="sendBtn">Enviar</button>
+      </div>
+    </div>
+
+    <!-- Visualizador de áudio -->
+    <div id="visualizer" class="visualizer hidden">
+      <div class="visualizer-bars"></div>
+      <div class="recording-time">00:00</div>
+      <button id="stopRecord" class="stop-btn">Parar</button>
+    </div>
+
+    <!-- Informações de uso -->
+    <div id="usageInfo" class="usage-info">
+      <span id="audioUsage">Uso de áudio: 0/10 hoje</span>
     </div>
 
     <hr/>
 
     <div>
-      <h3>Create Lesson</h3>
-      <input id="lessonPhrase" placeholder="Phrase in English" />
-      <input id="lessonTranslation" placeholder="Translation (optional)" />
-      <button id="addLesson">Add Lesson</button>
+      <h3>Criar Aula</h3>
+      <input id="lessonPhrase" placeholder="Frase em inglês" />
+      <input id="lessonTranslation" placeholder="Tradução (opcional)" />
+      <button id="addLesson">Adicionar Aula</button>
     </div>
 
     <div>
-      <h3>Lessons</h3>
+      <h3>Aulas</h3>
       <ul id="lessonsList"></ul>
     </div>
   </div>
