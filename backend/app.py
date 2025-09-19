@@ -34,19 +34,13 @@ FRONTEND_DIR = BASE_DIR.parent / "frontend"
 # --- Configuração do FastAPI ---
 app = FastAPI(title="English Agent Backend")
 
-# --- CORS ---
-origins = [
-    "http://localhost",
-    "http://127.0.0.1:5500",
-    "http://localhost:5500",
-    "https://english-agent-mvp-production.up.railway.app"
-]
+# --- CORS ATUALIZADO (PERMITE TODAS AS ORIGENS) ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],  # Permite todas as origens
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Permite todos os métodos
+    allow_headers=["*"],  # Permite todos os headers
 )
 
 # Servir arquivos de áudio
